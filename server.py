@@ -1,41 +1,43 @@
-from flask import Flask, make_response, request
-import json
+from flask import Flask, request
 from pprint import pformat
 
 app = Flask(__name__)
 
 d = {}
 
+
 @app.before_request
 def write_log():
-    f = open('/var/log/server.log', 'a')    
+    f = open('/var/log/server.log', 'a')
     f.write(pformat(request.headers))
     f.write('\r\n')
     f.close()
     return None
 
+
 @app.route("/storage/<filename>", methods=['GET'])
 def get(filename):
     if filename in d:
-        ans = make_response(d[filename], 200)
-        return ans
-    else:
-        return make_response(" ", 404)
+        return d[filename], 200
+    return " ", 404
+
 
 @app.route("/storage/<filename>", methods=['PUT'])
 def put(filename):
     if request.method == 'PUT':
         req = request.get_json()
         if req == None:
-            return make_responce(" ", 400)
-        d[filename] = req  
-        returnmake_response(" ", 201)
+            return " ", 400
+        d[filename] = req
+        return " ", 201
+
 
 @app.route("/storage/<filename>", methods=['DELETE'])
 def delete(filename):
     if filename in d:
         del d[filename]
     return 204
-    
+
+
 if __name__ == "__main__":
     app.run(port=8080)

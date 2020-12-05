@@ -1,14 +1,15 @@
 build:
-	sudo docker build -t emilrakhimov/practhw \ git@github.com:RakhimovEmil/my_practical_hw.git
+	docker build -t emilrakhimov/practhw \ git@github.com:RakhimovEmil/my_practical_hw.git
 
-start:
-	sudo docker run -it -p 8080:8080 emilrakhimov/practhw:latest
+start: build
+	docker run --detach -p 8080:8080 --rm --volume 'pwd':/var/log emilrakhimov/practhw:latest
 
 stop:
-	sudo docker stop emilrakhimov/practhw:latest
+	docker stop emilrakhimov/practhw:latest
 
 clean:
-	sudo docker rmi -f emilrakhimov/practhw:latest 
+	docker rmi -f emilrakhimov/practhw:latest
+	docker rm emilrakhimov/practhw:latest
 
 healthcheck:
-	@which -s docker
+	@which -s docker || echo "you need to install docker"
